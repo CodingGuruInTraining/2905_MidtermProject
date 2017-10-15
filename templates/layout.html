@@ -3,8 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <title>TBD</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 </head>
 <body>
-    {%  block body %}{% endblock %}
+    {% include 'partials/_navbar.html' %}
+
+    <div class="container">
+        {%  block body %}{% endblock %}
+    </div>
+
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 </body>
 </html>
+
+
+
+
+
+{#references:#}
+{#    formatting setup - https://www.youtube.com/watch?v=zRwy8gtgJ1A&feature=youtu.be#}
+{#    bootstrap - https://www.bootstrapcdn.com/#}
