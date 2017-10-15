@@ -1,6 +1,15 @@
 {% extends 'layout.html' %}
 
 {%  block body %}
+    <div class="jumbotron text-center">
+        <h1>View Tasks</h1>
+    </div>
 
-    
+    <div id="activeTasks">
+        <ul class="list-group">
+            {% for task in tasks %}
+                <li class="list-group-item"><a href="task/{{ task.id }}">{{ task.title }}</a></li>
+            {% endfor %}
+        </ul>
+    </div>
 {% endblock %}

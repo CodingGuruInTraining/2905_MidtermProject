@@ -16,6 +16,10 @@ def task():
     elif request.form['taskButton'] == 'VIEW TASKS':
         return render_template('viewtasks.html')
 
+@app.route('/task/<string:id>/')
+def showTasks(id):
+    return render_template('task.html', id = id)
+
 if __name__ == '__main__':
     app.run(debug=True)
 
