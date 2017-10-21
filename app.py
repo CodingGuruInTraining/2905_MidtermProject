@@ -1,7 +1,11 @@
 from flask import Flask, render_template, url_for, request
+from tempdata import dataFunction
 # from flask.ext.sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
+
+alltasks = dataFunction()
+
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/test.db'
 # db = SQLAlchemy(app)
 #
@@ -29,7 +33,7 @@ def task():
     if request.form['taskButton'] == 'NEW TASK':
         return render_template('newtask.html')
     elif request.form['taskButton'] == 'VIEW TASKS':
-        return render_template('viewtasks.html')
+        return render_template('viewtasks.html', tasks = alltasks)
 
 @app.route('/task/<string:id>/')
 def showTasks(id):
@@ -43,3 +47,4 @@ if __name__ == '__main__':
 
 # references:
     # button redirects - https://stackoverflow.com/questions/19794695/flask-python-buttons
+    # tasks table outline - https://datatables.net/examples/basic_init/scroll_y.html

@@ -6,10 +6,42 @@
     </div>
 
     <div id="activeTasks">
-        <ul class="list-group">
-            {% for task in tasks %}
-                <li class="list-group-item"><a href="task/{{ task.id }}">{{ task.title }}</a></li>
-            {% endfor %}
-        </ul>
+{#        <ul class="list-group">#}
+{#            {% for task in tasks %}#}
+{#                <li class="list-group-item"><a href="task/{{ task.id }}">{{ task.title }}</a></li>#}
+{#            {% endfor %}#}
+{#        </ul>#}
+
+        <table id="taskTable" width="100%">
+            <thead>
+                <tr>
+                    <th>Sel</th>
+                    <th>ID</th>
+                    <th>Task</th>
+                    <th>Description</th>
+                    <th>Opened When</th>
+                    <th>Seller</th>
+                    <th>Fare</th>
+                    <th>~Duration</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for task in tasks %}
+                    <tr>
+                        <th><input type="checkbox"></th>
+                        <th>{{ task.id }}</th>
+                        <th>{{ task.taskname }}</th>
+                        <th>{{ task.descript }}</th>
+                        <th>{{ task.opened }}</th>
+                        <th>{{ task.seller }}</th>
+                        <th>{{ task.fare }}</th>
+                        <th>{{ task.duration }}</th>
+                        <th>{{ task.status }}</th>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
 {% endblock %}

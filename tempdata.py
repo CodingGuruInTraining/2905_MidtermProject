@@ -31,3 +31,4 @@ def dataFunction():
             'status': 'Active'
         }
     ]
+    return datalist
