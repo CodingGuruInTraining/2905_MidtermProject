@@ -19,7 +19,7 @@
                     <th>ID</th>
                     <th>Task</th>
                     <th>Description</th>
-                    <th>Opened When</th>
+                    <th>Opened For</th>
                     <th>Seller</th>
                     <th>Fare</th>
                     <th>~Duration</th>
@@ -31,7 +31,7 @@
                 {% for task in tasks %}
                     <tr>
                         <th><input type="checkbox"></th>
-                        <th>{{ task.id }}</th>
+                        <th><a href="task/{{ task.id }}">{{ task.id }}</a></th>
                         <th>{{ task.taskname }}</th>
                         <th>{{ task.descript }}</th>
                         <th>{{ task.opened }}</th>
