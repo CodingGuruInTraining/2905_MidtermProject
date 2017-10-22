@@ -1,9 +1,11 @@
 from flask import Flask, render_template, url_for, request
+# TODO remove once database works
 from tempdata import dataFunction
 # from flask.ext.sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
 
+# TODO remove once database works
 alltasks = dataFunction()
 
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/test.db'
@@ -31,12 +33,15 @@ def home():
 @app.route('/viewtasks', methods=['POST'])
 def task():
     if request.form['taskButton'] == 'NEW TASK':
-        return render_template('newtask.html')
+        # TODO get next id number from database (probably when db starts up)
+        # TODO replace static test id number with next id number
+        return render_template('newtask.html', id = 42)
     elif request.form['taskButton'] == 'VIEW TASKS':
         return render_template('viewtasks.html', tasks = alltasks)
 
 @app.route('/task/<string:id>/')
 def showTasks(id):
+    print(id.toS)
     return render_template('task.html', id = id)
 
 if __name__ == '__main__':

@@ -4,5 +4,23 @@
     <div class="jumbotron text-center">
         <h1>New Task</h1>
     </div>
+{{ id }}
+    <div>
+        <form name="newtaskForm" id="newtaskForm" action="{{ url_for('showTasks', id = id) }}" method="post">
+            <label for="tasknameInput">Short Task Name: </label>
+            <input type="text" id="tasknameInput" name="tasknameInput"/>
+            <br>
+            <label for="descriptInput">Description of Task: </label>
+            <input type="text" id="descriptInput" name="descriptInput"/>
+            <br>
+            <label for="fareInput">Fare: </label>
+            <input type="text" id="fareInput" name="fareInput"/>
+            <br>
+            <label for="durationInput">Expected Duration: </label>
+            <input type="text" id="durationInput" name="durationInput"/>
+            <br>
+            <input type="submit" id="newSubmit" name="newSubmit" value="Add New Task"/>
+        </form>
+    </div>
 
 {% endblock %}
