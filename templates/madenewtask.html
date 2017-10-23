@@ -1,0 +1,15 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+    <div id="taskMadeResults">
+        <p>Congratulations! Your new task has been created and is ready for some poor shmuck to accept!</p>
+
+        <ul>
+            <li>ID: {{ task.id }}</li>
+            <li>Task Name: {{ task.taskname }}</li>
+            <li>Description: {{ task.descript }}</li>
+            <li>Fare: {{ task.fare }}</li>
+            <li>Duration: {{ task.duration }}</li>
+        </ul>
+    </div>
+{% endblock %}

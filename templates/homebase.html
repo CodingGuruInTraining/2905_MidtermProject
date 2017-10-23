@@ -1,8 +1,11 @@
 {% extends 'layout.html' %}
 
 {%  block body %}
-    <form method="post" action="{{ url_for('task') }}">
+    <form method="post" action="{{ url_for('new_task') }}">
         <input type="submit" name="taskButton" value="NEW TASK">
+    </form>
+
+    <form method="post" action="{{ url_for('view_tasks') }}">
         <input type="submit" name="taskButton" value="VIEW TASKS">
     </form>
 {% endblock %}

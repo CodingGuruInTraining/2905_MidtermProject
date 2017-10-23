@@ -30,15 +30,15 @@
             <tbody>
                 {% for task in tasks %}
                     <tr>
-                        <th><input type="checkbox"></th>
-                        <th><a href="task/{{ task.id }}">{{ task.id }}</a></th>
-                        <th>{{ task.taskname }}</th>
-                        <th>{{ task.descript }}</th>
-                        <th>{{ task.opened }}</th>
-                        <th>{{ task.seller }}</th>
-                        <th>{{ task.fare }}</th>
-                        <th>{{ task.duration }}</th>
-                        <th>{{ task.status }}</th>
+                        <td><input type="checkbox"></td>
+                        <td><a href="task/{{ task.id }}">{{ task.id }}</a></td>
+                        <td>{{ task.taskname }}</td>
+                        <td>{{ task.descript }}</td>
+                        <td>{{ task.opened }}</td>
+                        <td>{{ task.seller }}</td>
+                        <td>{{ task.fare }}</td>
+                        <td>{{ task.duration }}</td>
+                        <td>{{ task.status }}</td>
                     </tr>
                 {% endfor %}
             </tbody>

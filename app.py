@@ -1,4 +1,4 @@
-from flask import Flask, render_template, url_for, request
+from flask import Flask, render_template, url_for, request, jsonify
 # TODO remove once database works
 from tempdata import dataFunction
 # from flask.ext.sqlalchemy import SQLAlchemy
@@ -30,19 +30,58 @@ def home():
 
 
 @app.route('/newtask', methods=['POST'])
-@app.route('/viewtasks', methods=['POST'])
-def task():
-    if request.form['taskButton'] == 'NEW TASK':
+def new_task():
+    # if request.form['taskButton'] == 'NEW TASK':
         # TODO get next id number from database (probably when db starts up)
         # TODO replace static test id number with next id number
-        return render_template('newtask.html', id = 42)
-    elif request.form['taskButton'] == 'VIEW TASKS':
-        return render_template('viewtasks.html', tasks = alltasks)
+    return render_template('newtask.html', idd=42)
+
+
+@app.route('/viewtasks', methods=['POST'])
+def view_tasks():
+    # if request.form['taskButton'] == 'VIEW TASKS':
+    return render_template('viewtasks.html', tasks=alltasks)
+
 
 @app.route('/task/<string:id>/')
 def showTasks(id):
-    print(id.toS)
-    return render_template('task.html', id = id)
+    inputvalues = request.get_data()
+    return render_template('task.html', id=id)
+
+
+@app.route('/madeit', methods=['POST'])
+def madeTask():
+    # TODO test data exchanged with pulled data:
+    madeatask = {
+        'id': 48,
+        'taskname': 'steal candy from baby',
+        'descript': '',
+        'opened': '87 years',
+        'seller': 'Alucard\nLevel 99',
+        'fare': '12% of hall',
+        'duration': '',
+        'status': 'Active'
+    }
+
+    formData = request.get_json()
+
+    madeatask = {
+        'id': 44,
+        'taskname': formData['tasknameInput'],
+        'descript': formData['descriptInput'],
+        'opened': 'insertdatedatahere',
+        'seller': 'insertuserdatahere',
+        'fare': formData['fareInput'],
+        'duration': formData['durationInput'],
+        'status': 'insertstatusdatahere'
+    }
+
+    print(request.get_data())
+    return render_template('madenewtask.html', task=jsonify(madeatask))
+# @app.route('/task/')
+# def showTasks2():
+#     id = 3
+#     return "hi"
 
 if __name__ == '__main__':
     app.run(debug=True)
