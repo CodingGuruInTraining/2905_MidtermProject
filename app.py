@@ -1,28 +1,35 @@
 from flask import Flask, render_template, url_for, request, jsonify
 # TODO remove once database works
 from tempdata import dataFunction
-# from flask.ext.sqlalchemy import SQLAlchemy
+from flask_sqlalchemy import SQLAlchemy
+
 
 app = Flask(__name__)
 
 # TODO remove once database works
 alltasks = dataFunction()
 
-# app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/test.db'
-# db = SQLAlchemy(app)
-#
-# # TODO - Export class to py file:
-# class User(db.Model):
-#     __tablename__ = "notusers"
-#     id = db.Column(db.Integer, primary_key=True)
-#     username = db.Column(db.String(50), unique=True, nullable=False)
-#     firstname = db.Column(db.String(50))
-#     lastname = db.Column(db.String(75))
-#     points = db.Column(db.Integer)
-#     createdate = db.Column(db.DateTime)
-#
-#     def __repr__(self):
-#         return '<User %r>' % self.username
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/midtermapp.db'
+db = SQLAlchemy(app)
+
+# TODO - Export class to py file:
+class User(db.Model):
+    __tablename__ = "notusers"
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(50), unique=True, nullable=False)
+    firstname = db.Column(db.String(50))
+    lastname = db.Column(db.String(75))
+    points = db.Column(db.Integer)
+    createdate = db.Column(db.DateTime)
+
+    def __init__(self, username, firstname, lastname):
+        self.username = username
+        self.firstname = firstname
+        self.lastname = lastname
+        self.points = 0
+
+    def __repr__(self):
+        return '<User %r>' % self.username
 
 @app.route('/')
 def home():
@@ -78,10 +85,7 @@ def madeTask():
 
     print(request.get_data())
     return render_template('madenewtask.html', task=jsonify(madeatask))
-# @app.route('/task/')
-# def showTasks2():
-#     id = 3
-#     return "hi"
+
 
 if __name__ == '__main__':
     app.run(debug=True)
@@ -92,3 +96,4 @@ if __name__ == '__main__':
 # references:
     # button redirects - https://stackoverflow.com/questions/19794695/flask-python-buttons
     # tasks table outline - https://datatables.net/examples/basic_init/scroll_y.html
+    # some SQLAlchemy setup - https://www.youtube.com/watch?v=PJK950Gp780
