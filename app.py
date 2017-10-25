@@ -7,6 +7,7 @@ from flask_bootstrap import Bootstrap
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField
 from wtforms.validators import InputRequired, Length
+from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'ImNotGivingASecretToAMachine!'
@@ -26,7 +27,7 @@ class User(db.Model):
     firstname = db.Column(db.String(50))
     lastname = db.Column(db.String(75))
     # TODO add some encryption or something for password
-    password = db.Column(db.String(100))
+    password = db.Column(db.String(80))
     points = db.Column(db.Integer)
     createdate = db.Column(db.Integer)
 
@@ -115,7 +116,7 @@ def login():
     if loginform.validate_on_submit():
         user = User.query.filter_by(username=loginform.username.data).first()
         if user:
-            if user.password == loginform.password.data:
+            if check_password_hash(user.password, loginform.password.data):
                 loggedIn = True
                 return render_template('homebase.html', loggedIn=loggedIn)
 
@@ -134,10 +135,11 @@ def login():
 def signup():
     signupform = SignupForm()
     if signupform.validate_on_submit():
+        hashed_password = generate_password_hash(signupform.password.data, method='sha256')
         new_user = User(username=signupform.username.data,
                         firstname=signupform.firstname.data,
                         lastname=signupform.lastname.data,
-                        password=signupform.password.data)
+                        password=hashed_password)
         db.session.add(new_user)
         db.sesion.commit()
         print("new user created! score!")
