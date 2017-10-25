@@ -1,6 +1,8 @@
 from flask import Flask, render_template, url_for, request, jsonify
+
 # TODO remove once database works
 from tempdata import dataFunction
+
 from flask_sqlalchemy import SQLAlchemy
 import time
 from flask_bootstrap import Bootstrap
@@ -11,13 +13,16 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 
 app = Flask(__name__)
+# Secret key used for wtforms' login.
 app.config['SECRET_KEY'] = 'ImNotGivingASecretToAMachine!'
+# Establishes database location.
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////midtermapp.db'
 Bootstrap(app)
 db = SQLAlchemy(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
+
 # TODO remove once database works
 alltasks = dataFunction()
 
@@ -25,7 +30,7 @@ loggedIn = False
 
 # TODO - Export class to py file:
 class User(UserMixin, db.Model):
-    __tablename__ = "notusers"
+    # __tablename__ = "notusers"
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(50), unique=True, nullable=False)
     firstname = db.Column(db.String(50))
