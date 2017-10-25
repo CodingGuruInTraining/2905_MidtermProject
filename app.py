@@ -8,19 +8,23 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField
 from wtforms.validators import InputRequired, Length
 from werkzeug.security import generate_password_hash, check_password_hash
+from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'ImNotGivingASecretToAMachine!'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////midtermapp.db'
 Bootstrap(app)
 db = SQLAlchemy(app)
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'login'
 # TODO remove once database works
 alltasks = dataFunction()
 
 loggedIn = False
 
 # TODO - Export class to py file:
-class User(db.Model):
+class User(UserMixin, db.Model):
     __tablename__ = "notusers"
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(50), unique=True, nullable=False)
@@ -42,6 +46,10 @@ class User(db.Model):
     def __repr__(self):
         return '<User %r>' % self.username
 
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
+
 class LoginForm(FlaskForm):
     username = StringField('username', validators=[InputRequired(), Length(min=5, max=15)])
     # TODO increase password min once done testing/developing
@@ -56,8 +64,9 @@ class SignupForm(FlaskForm):
 
 
 @app.route('/')
+@login_required
 def home():
-    return render_template('homebase.html', loggedIn=loggedIn)
+    return render_template('homebase.html', loggedIn=loggedIn, name=current_user.username)
 
 
 @app.route('/newtask', methods=['POST'])
@@ -117,8 +126,9 @@ def login():
         user = User.query.filter_by(username=loginform.username.data).first()
         if user:
             if check_password_hash(user.password, loginform.password.data):
+                login_user(user)
                 loggedIn = True
-                return render_template('homebase.html', loggedIn=loggedIn)
+                return render_template('homebase.html', loggedIn=loggedIn, name=user.username)
 
     return render_template('login.html', form=loginform)
     # if request.method == 'GET':
@@ -141,8 +151,9 @@ def signup():
                         lastname=signupform.lastname.data,
                         password=hashed_password)
         db.session.add(new_user)
-        db.sesion.commit()
+        db.session.commit()
         print("new user created! score!")
+        return render_template('homebase.html', loggedIn=loggedIn, name=new_user.username)
     return render_template('signup.html', form=signupform)
     # if request.method == 'GET':
     #
@@ -155,6 +166,12 @@ def signup():
     #     # TODO add to database
     #     loggedIn = True
     #     return render_template('homebase.html', loggedIn=loggedIn)
+
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return render_template('homebase.html', loggedIn=loggedIn, name='Guest')
 
 if __name__ == '__main__':
     app.run(debug=True)
