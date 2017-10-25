@@ -1,23 +1,26 @@
 {% extends 'layout.html' %}
-
+{% import 'bootstrap/wtf.html' as wtf %}
 {% block body %}
 
     <div id="loginDiv">
         <form action="{{ url_for('login') }}" method="post">
             <fieldset><legend>Login</legend>
 
-                <label for="usernameLogin">Username:</label>
-                <input type="text" name="usernameLogin" id="usernameLogin" required/>
-                <br>
-                <label for="passwordLogin">Password:</label>
-                <input type="password" name="passwordLogin" id="passwordLogin"/>
+                {{ form.hidden_tag() }}
+                {{ wtf.form_field(form.username) }}
+                {{ wtf.form_field(form.password) }}
+{#                <label for="usernameLogin">Username:</label>#}
+{#                <input type="text" name="usernameLogin" id="usernameLogin" required/>#}
+{#                <br>#}
+{#                <label for="passwordLogin">Password:</label>#}
+{#                <input type="password" name="passwordLogin" id="passwordLogin"/>#}
                 <br>
                 <input type="submit" id="submitLogin" name="submitLogin" value="Login"/>
 
             </fieldset>
         </form>
     </div>
-
+    <br>
     <p><a href="/signup">Sign up!</a> </p>
 
 {% endblock %}

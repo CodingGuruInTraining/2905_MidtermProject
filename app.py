@@ -3,14 +3,18 @@ from flask import Flask, render_template, url_for, request, jsonify
 from tempdata import dataFunction
 from flask_sqlalchemy import SQLAlchemy
 import time
+from flask_bootstrap import Bootstrap
+from flask_wtf import FlaskForm
+from wtforms import StringField, PasswordField
+from wtforms.validators import InputRequired, Length
 
 app = Flask(__name__)
-
+app.config['SECRET_KEY'] = 'ImNotGivingASecretToAMachine!'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////midtermapp.db'
+Bootstrap(app)
+db = SQLAlchemy(app)
 # TODO remove once database works
 alltasks = dataFunction()
-
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/midtermapp.db'
-db = SQLAlchemy(app)
 
 loggedIn = False
 
@@ -36,6 +40,19 @@ class User(db.Model):
 
     def __repr__(self):
         return '<User %r>' % self.username
+
+class LoginForm(FlaskForm):
+    username = StringField('username', validators=[InputRequired(), Length(min=5, max=15)])
+    # TODO increase password min once done testing/developing
+    password = PasswordField('password', validators=[InputRequired(), Length(min=1, max=80)])
+
+class SignupForm(FlaskForm):
+    username = StringField('username', validators=[InputRequired(), Length(min=5, max=15)])
+    firstname = StringField('firstname', validators=[InputRequired(), Length(min=2, max=15)])
+    lastname = StringField('lastname', validators=[InputRequired(), Length(min=2, max=15)])
+    # TODO increase password min once done testing/developing
+    password = PasswordField('password', validators=[InputRequired(), Length(min=1, max=80)])
+
 
 @app.route('/')
 def home():
@@ -94,27 +111,48 @@ def madeTask():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    if request.method == 'GET':
-        return render_template('login.html')
-    elif request.method == 'POST':
-        username = request.form['usernameLogin']
-        password = request.form['passwordLogin']
-        # TODO check database for credentials
-        loggedIn = True
-        return render_template('homebase.html', loggedIn=loggedIn)
+    loginform = LoginForm()
+    if loginform.validate_on_submit():
+        user = User.query.filter_by(username=loginform.username.data).first()
+        if user:
+            if user.password == loginform.password.data:
+                loggedIn = True
+                return render_template('homebase.html', loggedIn=loggedIn)
+
+    return render_template('login.html', form=loginform)
+    # if request.method == 'GET':
+    #
+    #     return render_template('login.html', form=loginform)
+    # elif request.method == 'POST':
+    #     username = request.form['usernameLogin']
+    #     password = request.form['passwordLogin']
+    #     # TODO check database for credentials
+    #     loggedIn = True
+    #     return render_template('homebase.html', loggedIn=loggedIn)
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
-    if request.method == 'GET':
-        return render_template('signup.html')
-    elif request.method == 'POST':
-        username = request.form['usernameSignup']
-        firstname = request.form['firstname']
-        lastname = request.form['lastname']
-        password = request.form['passwordSignup']
-        # TODO add to database
-        loggedIn = True
-        return render_template('homebase.html', loggedIn=loggedIn)
+    signupform = SignupForm()
+    if signupform.validate_on_submit():
+        new_user = User(username=signupform.username.data,
+                        firstname=signupform.firstname.data,
+                        lastname=signupform.lastname.data,
+                        password=signupform.password.data)
+        db.session.add(new_user)
+        db.sesion.commit()
+        print("new user created! score!")
+    return render_template('signup.html', form=signupform)
+    # if request.method == 'GET':
+    #
+    #     return render_template('signup.html', form=signupform)
+    # elif request.method == 'POST':
+    #     username = request.form['usernameSignup']
+    #     firstname = request.form['firstname']
+    #     lastname = request.form['lastname']
+    #     password = request.form['passwordSignup']
+    #     # TODO add to database
+    #     loggedIn = True
+    #     return render_template('homebase.html', loggedIn=loggedIn)
 
 if __name__ == '__main__':
     app.run(debug=True)
@@ -127,3 +165,6 @@ if __name__ == '__main__':
     # tasks table outline - https://datatables.net/examples/basic_init/scroll_y.html
     # some SQLAlchemy setup - https://www.youtube.com/watch?v=PJK950Gp780
     # unix time - http://avilpage.com/2014/11/python-unix-timestamp-utc-and-their.html
+    # database setup - https://www.youtube.com/watch?v=xTumGVC90_0
+    # database setup - https://www.youtube.com/watch?v=qfGu0fBfNBs
+    # amazing login and database setup - https://www.youtube.com/watch?v=8aTnmsDMldY
