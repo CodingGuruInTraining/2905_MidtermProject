@@ -1,0 +1,29 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+
+    <div id="signupDiv">
+        <form action="" method="post">
+            <fieldset><legend>Signup</legend>
+
+                <label for="usernameSignup">Username:</label>
+                <input type="text" name="usernameSignup" id="usernameSignup" required/>
+                <br>
+                <label for="firstname">First Name:</label>
+                <input type="text" name="firstname" id="firstname"/>
+                <br>
+                <label for="lastname">Last Name:</label>
+                <input type="text" name="lastname" id="lastname"/>
+                <br>
+                <label for="passwordSignup">Password:</label>
+                <input type="password" name="passwordSignup" id="passwordSignup"/>
+                <br>
+                <input type="submit" id="submitSignup" name="submitSignup" value="Signup"/>
+
+            </fieldset>
+        </form>
+    </div>
+
+    <p><a href="/login">Log in</a> </p>
+
+{% endblock %}
