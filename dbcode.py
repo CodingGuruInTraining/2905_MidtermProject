@@ -1,7 +1,7 @@
 import sqlite3
 import time
 
-
+# Table creation method.
 def create_table():
     conn = sqlite3.connect('midtermapp.db')
     c = conn.cursor()
@@ -12,6 +12,9 @@ def create_table():
     c.close()
     conn.close()
 
+
+
+# Select all method that returns results.
 def select_all_db():
     conn = sqlite3.connect('midtermapp.db')
     conn.row_factory = dict_factory
@@ -22,6 +25,11 @@ def select_all_db():
     conn.close()
     return data
 
+
+
+
+# Select one item based on received task name.
+# Returns results.
 def select_taskname_db(task_name):
     conn = sqlite3.connect('midtermapp.db')
     conn.row_factory = dict_factory
@@ -33,6 +41,10 @@ def select_taskname_db(task_name):
     conn.close()
     return data
 
+
+
+
+# Select one item based on received id. Returns results.
 def select_id_db(id):
     conn = sqlite3.connect('midtermapp.db')
     conn.row_factory = dict_factory
@@ -43,6 +55,11 @@ def select_id_db(id):
     conn.close()
     return data
 
+
+
+
+# Insert method for adding new row with passed variables.
+# The remaining variables are created before executing.
 def add_task_db(taskname, descript, seller, fare, duration):
     conn = sqlite3.connect('midtermapp.db')
     c = conn.cursor()
@@ -55,6 +72,10 @@ def add_task_db(taskname, descript, seller, fare, duration):
     c.close()
     conn.close()
 
+
+
+
+# Update method for changing the status of task.
 def close_task_db(id):
     conn = sqlite3.connect('midtermapp.db')
     c = conn.cursor()
@@ -64,6 +85,10 @@ def close_task_db(id):
     c.close()
     conn.close()
 
+
+
+
+# Method that converts database results from a tuple to dictionary.
 def dict_factory(cursor, row):
     d = {}
     for idx, col in enumerate(cursor.description):
