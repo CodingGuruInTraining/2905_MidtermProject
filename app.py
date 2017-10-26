@@ -95,7 +95,10 @@ def madeTask():
 # TODO move time and other stuff out of methods and add here
     taskname = request.form['tasknameInput']
     descript = request.form['descriptInput']
+
+# TODO switch out with username eventually
     seller = 'Dave'
+
     fare = request.form['fareInput']
     duration = request.form['durationInput']
     dbcode.add_task_db(taskname, descript, seller, fare, duration)
@@ -105,7 +108,15 @@ def madeTask():
 
 @app.route('/soulsold', methods=['GET', 'POST'])
 def sellSoul():
-
+    data = request.form.getlist("cbox")
+    # dataString = ""
+    # for i in data:
+    #     dataString += i + ","
+    # dataString = dataString[:-1]
+    # print(dataString)
+# TODO figure out easier way:
+    for i in data:
+        dbcode.close_task_db(i)
     return render_template('receipt.html')
 
 @app.route('/about')
@@ -187,3 +198,5 @@ if __name__ == '__main__':
     # database setup - https://www.youtube.com/watch?v=qfGu0fBfNBs
     # amazing login and database setup - https://www.youtube.com/watch?v=8aTnmsDMldY
     # row_factory - https://stackoverflow.com/questions/3300464/how-can-i-get-dict-from-sqlite-query
+    # request.form.getlist - https://stackoverflow.com/questions/7996075/iterate-through-checkboxes-in-flask
+    #
