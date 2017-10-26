@@ -87,7 +87,8 @@ def view_tasks():
 @app.route('/task/<string:id>/')
 def showTasks(id):
 # TODO design and create
-    return render_template('task.html', id=id)
+    data = dbcode.select_id_db(id)
+    return render_template('task.html', id=id, task=data)
 
 
 @app.route('/madeit', methods=['POST'])

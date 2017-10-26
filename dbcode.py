@@ -33,6 +33,16 @@ def select_taskname_db(task_name):
     conn.close()
     return data
 
+def select_id_db(id):
+    conn = sqlite3.connect('midtermapp.db')
+    conn.row_factory = dict_factory
+    c = conn.cursor()
+    c.execute("SELECT * FROM taskdata WHERE id = ?", id)
+    data = c.fetchone()
+    c.close()
+    conn.close()
+    return data
+
 def add_task_db(taskname, descript, seller, fare, duration):
     conn = sqlite3.connect('midtermapp.db')
     c = conn.cursor()
