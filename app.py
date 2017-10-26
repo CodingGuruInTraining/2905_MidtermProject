@@ -21,7 +21,7 @@ def create_table():
     conn = sqlite3.connect('midtermapp.db')
     c = conn.cursor()
     c.execute("CREATE TABLE IF NOT EXISTS taskdata(id INTEGER PRIMARY KEY AUTOINCREMENT, "
-              "taskname TEXT, descript TEXT, opened INTEGER, seller TEXT, fare TEXT, "
+              "taskname TEXT UNIQUE, descript TEXT, opened INTEGER, seller TEXT, fare TEXT, "
               "duration TEXT, status TEXT)")
     conn.commit()
     c.close()
@@ -31,6 +31,7 @@ create_table()
 
 def select_all_db():
     conn = sqlite3.connect('midtermapp.db')
+    conn.row_factory = dict_factory
     c = conn.cursor()
     c.execute('SELECT * FROM taskdata')
     data = c.fetchall()
@@ -38,6 +39,17 @@ def select_all_db():
     # for testing:
     for row in data:
         print(row)
+    c.close()
+    conn.close()
+    return data
+
+def select_taskname_db(task_name):
+    conn = sqlite3.connect('midtermapp.db')
+    conn.row_factory = dict_factory
+    c = conn.cursor()
+    sqlString = "SELECT * FROM taskdata WHERE taskname = \'" + task_name + "\'"
+    c.execute(sqlString)
+    data = c.fetchone()
     c.close()
     conn.close()
     return data
@@ -67,6 +79,14 @@ def close_task_db(id):
 #
 #     c.close()
 #     conn.close()
+
+
+def dict_factory(cursor, row):
+    d = {}
+    for idx, col in enumerate(cursor.description):
+        d[col[0]] = row[idx]
+    return d
+
 
 app = Flask(__name__)
 # Secret key used for wtforms' login.
@@ -127,6 +147,10 @@ class SignupForm(FlaskForm):
 @app.route('/')
 # @login_required
 def home():
+
+    # testing:
+    data = select_all_db()
+
     return render_template('homebase.html', loggedIn=loggedIn)
 
 
@@ -141,7 +165,10 @@ def new_task():
 @app.route('/viewtasks', methods=['POST'])
 def view_tasks():
     # if request.form['taskButton'] == 'VIEW TASKS':
-    return render_template('viewtasks.html', tasks=alltasks)
+
+    data = select_all_db()
+
+    return render_template('viewtasks.html', tasks=data) #alltasks)
 
 
 @app.route('/task/<string:id>/')
@@ -164,27 +191,34 @@ def madeTask():
     #     'status': 'Active'
     # }
 
-    data = select_all_db()
-    dataCount = len(data) #.__len__()
-    print('count maybe is: ' + str(dataCount))
-    formData = jsonify(request.get_json())
-    # add_task_db()
-    # formData = request.get_data()
-    print(request.get_data())
-    print(formData)
+    # data = select_all_db()
+    # dataCount = len(data) #.__len__()
+    # print('count maybe is: ' + str(dataCount))
+    # formData = jsonify(request.get_json())
+    # # add_task_db()
+    # # formData = request.get_data()
+    # print(request.get_data())
+    # print(formData)
 
 # TODO move time and other stuff out of methods and add here
-    madeatask = {
-        'id': dataCount + 1,
-        'taskname': request.form['tasknameInput'],
-        'descript': request.form['descriptInput'],
-
-        'seller': 'Dave',
-        'fare': request.form['fareInput'],
-        'duration': request.form['durationInput']
-
-    }
-
+    taskname = request.form['tasknameInput']
+    descript = request.form['descriptInput']
+    seller = 'Dave'
+    fare = request.form['fareInput']
+    duration = request.form['durationInput']
+    add_task_db(taskname, descript, seller, fare, duration)
+    madeatask = select_taskname_db(taskname)
+    # madeatask = {
+    #     'id': dataCount + 1,
+    #     'taskname': taskname,
+    #     'descript': descript,
+    #     # 'opened':
+    #     'seller': 'Dave',
+    #     'fare': request.form['fareInput'],
+    #     'duration': request.form['durationInput']
+    #
+    # }
+    print(madeatask)
 # TODO add values to database
 
     return render_template('madenewtask.html', task=madeatask)
@@ -259,3 +293,4 @@ if __name__ == '__main__':
     # database setup - https://www.youtube.com/watch?v=xTumGVC90_0
     # database setup - https://www.youtube.com/watch?v=qfGu0fBfNBs
     # amazing login and database setup - https://www.youtube.com/watch?v=8aTnmsDMldY
+    # row_factory - https://stackoverflow.com/questions/3300464/how-can-i-get-dict-from-sqlite-query
