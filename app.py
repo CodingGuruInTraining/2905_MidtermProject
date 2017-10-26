@@ -12,11 +12,67 @@ from wtforms.validators import InputRequired, Length
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 
+import sqlite3
+
+# conn = sqlite3.connect('midtermapp.db')
+# c = conn.cursor()
+
+def create_table():
+    conn = sqlite3.connect('midtermapp.db')
+    c = conn.cursor()
+    c.execute("CREATE TABLE IF NOT EXISTS taskdata(id INTEGER PRIMARY KEY AUTOINCREMENT, "
+              "taskname TEXT, descript TEXT, opened INTEGER, seller TEXT, fare TEXT, "
+              "duration TEXT, status TEXT)")
+    conn.commit()
+    c.close()
+    conn.close()
+
+create_table()
+
+def select_all_db():
+    conn = sqlite3.connect('midtermapp.db')
+    c = conn.cursor()
+    c.execute('SELECT * FROM taskdata')
+    data = c.fetchall()
+
+    # for testing:
+    for row in data:
+        print(row)
+    c.close()
+    conn.close()
+    return data
+
+def add_task_db(taskname, descript, seller, fare, duration):
+    conn = sqlite3.connect('midtermapp.db')
+    c = conn.cursor()
+    opened = int(time.time())
+    c.execute("INSERT INTO taskdata (taskname, descript, opened, seller, fare, "
+              "duration, status) VALUES (?, ?, ?, ?, ?, ?, ?)",
+              (taskname, descript, opened, seller, fare, duration, 'Active'))
+    conn.commit()
+    print("added task to db")
+    c.close()
+    conn.close()
+
+def close_task_db(id):
+    conn = sqlite3.connect('midtermapp.db')
+    c = conn.cursor()
+    c.execute("UPDATE taskdata SET status = 'Closed' WHERE id = ?", id)
+    conn.commit()
+    print('update complete')
+    c.close()
+    conn.close()
+
+# def end_conn():
+#
+#     c.close()
+#     conn.close()
+
 app = Flask(__name__)
 # Secret key used for wtforms' login.
 app.config['SECRET_KEY'] = 'ImNotGivingASecretToAMachine!'
 # Establishes database location.
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////midtermapp.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////database.sqlite'
 Bootstrap(app)
 db = SQLAlchemy(app)
 login_manager = LoginManager()
@@ -28,32 +84,32 @@ alltasks = dataFunction()
 
 loggedIn = False
 
-# TODO - Export class to py file:
-class User(UserMixin, db.Model):
-    # __tablename__ = "notusers"
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(50), unique=True, nullable=False)
-    firstname = db.Column(db.String(50))
-    lastname = db.Column(db.String(75))
-    # TODO add some encryption or something for password
-    password = db.Column(db.String(80))
-    points = db.Column(db.Integer)
-    createdate = db.Column(db.Integer)
+# # TODO - Export class to py file:
+# class User(UserMixin, db.Model):
+#     # __tablename__ = "notusers"
+#     id = db.Column(db.Integer, primary_key=True)
+#     username = db.Column(db.String(50), unique=True, nullable=False)
+#     firstname = db.Column(db.String(50))
+#     lastname = db.Column(db.String(75))
+#     # TODO add some encryption or something for password
+#     password = db.Column(db.String(80))
+#     points = db.Column(db.Integer)
+#     createdate = db.Column(db.Integer)
 
-    def __init__(self, username, firstname, lastname, password):
-        self.username = username
-        self.firstname = firstname
-        self.lastname = lastname
-        self.password = password
-        self.points = 0
-        self.createdate = int(time.time())
+    # def __init__(self, username, firstname, lastname, password):
+    #     self.username = username
+    #     self.firstname = firstname
+    #     self.lastname = lastname
+    #     self.password = password
+    #     self.points = 0
+    #     self.createdate = int(time.time())
+    #
+    # def __repr__(self):
+    #     return '<User %r>' % self.username
 
-    def __repr__(self):
-        return '<User %r>' % self.username
-
-@login_manager.user_loader
-def load_user(user_id):
-    return User.query.get(int(user_id))
+# @login_manager.user_loader
+# def load_user(user_id):
+#     return User.query.get(int(user_id))
 
 class LoginForm(FlaskForm):
     username = StringField('username', validators=[InputRequired(), Length(min=5, max=15)])
@@ -69,17 +125,17 @@ class SignupForm(FlaskForm):
 
 
 @app.route('/')
-@login_required
+# @login_required
 def home():
-    return render_template('homebase.html', loggedIn=loggedIn, name=current_user.username)
+    return render_template('homebase.html', loggedIn=loggedIn)
 
 
 @app.route('/newtask', methods=['POST'])
 def new_task():
     # if request.form['taskButton'] == 'NEW TASK':
         # TODO get next id number from database (probably when db starts up)
-        # TODO replace static test id number with next id number
-    return render_template('newtask.html', idd=42)
+
+    return render_template('newtask.html') #, idd=dataCount + 1)
 
 
 @app.route('/viewtasks', methods=['POST'])
@@ -97,43 +153,53 @@ def showTasks(id):
 @app.route('/madeit', methods=['POST'])
 def madeTask():
     # TODO test data exchanged with pulled data:
-    madeatask = {
-        'id': 48,
-        'taskname': 'steal candy from baby',
-        'descript': '',
-        'opened': '87 years',
-        'seller': 'Alucard\nLevel 99',
-        'fare': '12% of hall',
-        'duration': '',
-        'status': 'Active'
-    }
+    # madeatask = {
+    #     'id': 48,
+    #     'taskname': 'steal candy from baby',
+    #     'descript': '',
+    #     'opened': '87 years',
+    #     'seller': 'Alucard\nLevel 99',
+    #     'fare': '12% of hall',
+    #     'duration': '',
+    #     'status': 'Active'
+    # }
 
-    formData = request.get_json()
-
-    madeatask = {
-        'id': 44,
-        'taskname': formData['tasknameInput'],
-        'descript': formData['descriptInput'],
-        'opened': 'insertdatedatahere',
-        'seller': 'insertuserdatahere',
-        'fare': formData['fareInput'],
-        'duration': formData['durationInput'],
-        'status': 'insertstatusdatahere'
-    }
-
+    data = select_all_db()
+    dataCount = len(data) #.__len__()
+    print('count maybe is: ' + str(dataCount))
+    formData = jsonify(request.get_json())
+    # add_task_db()
+    # formData = request.get_data()
     print(request.get_data())
-    return render_template('madenewtask.html', task=jsonify(madeatask))
+    print(formData)
+
+# TODO move time and other stuff out of methods and add here
+    madeatask = {
+        'id': dataCount + 1,
+        'taskname': request.form['tasknameInput'],
+        'descript': request.form['descriptInput'],
+
+        'seller': 'Dave',
+        'fare': request.form['fareInput'],
+        'duration': request.form['durationInput']
+
+    }
+
+# TODO add values to database
+
+    return render_template('madenewtask.html', task=madeatask)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     loginform = LoginForm()
     if loginform.validate_on_submit():
-        user = User.query.filter_by(username=loginform.username.data).first()
-        if user:
-            if check_password_hash(user.password, loginform.password.data):
-                login_user(user)
-                loggedIn = True
-                return render_template('homebase.html', loggedIn=loggedIn, name=user.username)
+        print('login validate passed')
+        # user = User.query.filter_by(username=loginform.username.data).first()
+        # if user:
+        #     if check_password_hash(user.password, loginform.password.data):
+        #         login_user(user)
+        #         loggedIn = True
+        #         return render_template('homebase.html', loggedIn=loggedIn, name=user.username)
 
     return render_template('login.html', form=loginform)
     # if request.method == 'GET':
@@ -150,15 +216,16 @@ def login():
 def signup():
     signupform = SignupForm()
     if signupform.validate_on_submit():
-        hashed_password = generate_password_hash(signupform.password.data, method='sha256')
-        new_user = User(username=signupform.username.data,
-                        firstname=signupform.firstname.data,
-                        lastname=signupform.lastname.data,
-                        password=hashed_password)
-        db.session.add(new_user)
-        db.session.commit()
-        print("new user created! score!")
-        return render_template('homebase.html', loggedIn=loggedIn, name=new_user.username)
+        print('signup validate success')
+        # hashed_password = generate_password_hash(signupform.password.data, method='sha256')
+        # new_user = User(username=signupform.username.data,
+        #                 firstname=signupform.firstname.data,
+        #                 lastname=signupform.lastname.data,
+        #                 password=hashed_password)
+        # db.session.add(new_user)
+        # db.session.commit()
+        # print("new user created! score!")
+        # return render_template('homebase.html', loggedIn=loggedIn, name=new_user.username)
     return render_template('signup.html', form=signupform)
     # if request.method == 'GET':
     #
