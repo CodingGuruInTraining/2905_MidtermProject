@@ -6,42 +6,38 @@
     </div>
 
     <div id="activeTasks">
-{#        <ul class="list-group">#}
-{#            {% for task in tasks %}#}
-{#                <li class="list-group-item"><a href="task/{{ task.id }}">{{ task.title }}</a></li>#}
-{#            {% endfor %}#}
-{#        </ul>#}
-
-        <table id="taskTable" width="100%">
-            <thead>
-                <tr>
-                    <th>Sel</th>
-                    <th>ID</th>
-                    <th>Task</th>
-                    <th>Description</th>
-                    <th>Opened For</th>
-                    <th>Seller</th>
-                    <th>Fare</th>
-                    <th>~Duration</th>
-                    <th>Status</th>
-                </tr>
-            </thead>
-
-            <tbody>
-                {% for task in tasks %}
+        <form method="post" action="{{ url_for('sellSoul') }}">
+            <table id="taskTable" width="100%">
+                <thead>
                     <tr>
-                        <td><input type="checkbox"></td>
-                        <td><a href="task/{{ task.id }}">{{ task.id }}</a></td>
-                        <td>{{ task.taskname }}</td>
-                        <td>{{ task.descript }}</td>
-                        <td>{{ task.opened }}</td>
-                        <td>{{ task.seller }}</td>
-                        <td>{{ task.fare }}</td>
-                        <td>{{ task.duration }}</td>
-                        <td>{{ task.status }}</td>
+                        <th>Sel</th>
+                        <th>ID</th>
+                        <th>Task</th>
+                        <th>Description</th>
+                        <th>Opened For</th>
+                        <th>Seller</th>
+                        <th>Fare</th>
+                        <th>~Duration</th>
+                        <th>Status</th>
                     </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+                </thead>
+
+                <tbody>
+                    {% for task in tasks %}
+                        <tr>
+                            <td><input type="checkbox" name="cbox" value="{{ task.id }}"></td>
+                            <td><a href="task/{{ task.id }}">{{ task.id }}</a></td>
+                            <td>{{ task.taskname }}</td>
+                            <td>{{ task.descript }}</td>
+                            <td>{{ task.opened }}</td>
+                            <td>{{ task.seller }}</td>
+                            <td>{{ task.fare }}</td>
+                            <td>{{ task.duration }}</td>
+                            <td>{{ task.status }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </form>
     </div>
 {% endblock %}
