@@ -1,11 +1,13 @@
 {% extends 'layout.html' %}
 
 {%  block body %}
-    <form method="post" action="{{ url_for('new_task') }}">
-        <input type="submit" name="taskButton" id="newtaskbutton" value="NEW TASK">
-    </form>
+    <div id="buttondiv">
+        <form id="newtaskform" method="post" action="{{ url_for('new_task') }}">
+            <input type="submit" name="taskButton" id="newtaskbutton" value="NEW TASK">
+        </form>
 
-    <form method="post" action="{{ url_for('view_tasks') }}">
-        <input type="submit" name="taskButton" id="viewtasksbutton" value="VIEW TASKS">
-    </form>
+        <form id="viewtasksform" method="post" action="{{ url_for('view_tasks') }}">
+            <input type="submit" name="taskButton" id="viewtasksbutton" value="VIEW TASKS">
+        </form>
+    </div>
 {% endblock %}

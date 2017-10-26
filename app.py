@@ -18,7 +18,7 @@ import dbcode
 # Run database creation method at startup.
 dbcode.create_table()
 
-app = Flask(__name__)
+app = Flask(__name__, '/static', static_folder='static', template_folder='templates')
 # Secret key used for wtforms' login.
 app.config['SECRET_KEY'] = 'ImNotGivingASecretToAMachine!'
 # Establishes database location.
