@@ -13,67 +13,61 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 
 import sqlite3
+import dbcode
 
-# conn = sqlite3.connect('midtermapp.db')
-# c = conn.cursor()
+# def create_table():
+#     conn = sqlite3.connect('midtermapp.db')
+#     c = conn.cursor()
+#     c.execute("CREATE TABLE IF NOT EXISTS taskdata(id INTEGER PRIMARY KEY AUTOINCREMENT, "
+#               "taskname TEXT UNIQUE, descript TEXT, opened INTEGER, seller TEXT, fare TEXT, "
+#               "duration TEXT, status TEXT)")
+#     conn.commit()
+#     c.close()
+#     conn.close()
 
-def create_table():
-    conn = sqlite3.connect('midtermapp.db')
-    c = conn.cursor()
-    c.execute("CREATE TABLE IF NOT EXISTS taskdata(id INTEGER PRIMARY KEY AUTOINCREMENT, "
-              "taskname TEXT UNIQUE, descript TEXT, opened INTEGER, seller TEXT, fare TEXT, "
-              "duration TEXT, status TEXT)")
-    conn.commit()
-    c.close()
-    conn.close()
+# create_table()
 
-create_table()
+# def select_all_db():
+#     conn = sqlite3.connect('midtermapp.db')
+#     conn.row_factory = dict_factory
+#     c = conn.cursor()
+#     c.execute('SELECT * FROM taskdata')
+#     data = c.fetchall()
+#     c.close()
+#     conn.close()
+#     return data
 
-def select_all_db():
-    conn = sqlite3.connect('midtermapp.db')
-    conn.row_factory = dict_factory
-    c = conn.cursor()
-    c.execute('SELECT * FROM taskdata')
-    data = c.fetchall()
+# def select_taskname_db(task_name):
+#     conn = sqlite3.connect('midtermapp.db')
+#     conn.row_factory = dict_factory
+#     c = conn.cursor()
+#     sqlString = "SELECT * FROM taskdata WHERE taskname = \'" + task_name + "\'"
+#     c.execute(sqlString)
+#     data = c.fetchone()
+#     c.close()
+#     conn.close()
+#     return data
 
-    # for testing:
-    for row in data:
-        print(row)
-    c.close()
-    conn.close()
-    return data
+# def add_task_db(taskname, descript, seller, fare, duration):
+#     conn = sqlite3.connect('midtermapp.db')
+#     c = conn.cursor()
+#     opened = int(time.time())
+#     c.execute("INSERT INTO taskdata (taskname, descript, opened, seller, fare, "
+#               "duration, status) VALUES (?, ?, ?, ?, ?, ?, ?)",
+#               (taskname, descript, opened, seller, fare, duration, 'Active'))
+#     conn.commit()
+#     print("added task to db")
+#     c.close()
+#     conn.close()
 
-def select_taskname_db(task_name):
-    conn = sqlite3.connect('midtermapp.db')
-    conn.row_factory = dict_factory
-    c = conn.cursor()
-    sqlString = "SELECT * FROM taskdata WHERE taskname = \'" + task_name + "\'"
-    c.execute(sqlString)
-    data = c.fetchone()
-    c.close()
-    conn.close()
-    return data
-
-def add_task_db(taskname, descript, seller, fare, duration):
-    conn = sqlite3.connect('midtermapp.db')
-    c = conn.cursor()
-    opened = int(time.time())
-    c.execute("INSERT INTO taskdata (taskname, descript, opened, seller, fare, "
-              "duration, status) VALUES (?, ?, ?, ?, ?, ?, ?)",
-              (taskname, descript, opened, seller, fare, duration, 'Active'))
-    conn.commit()
-    print("added task to db")
-    c.close()
-    conn.close()
-
-def close_task_db(id):
-    conn = sqlite3.connect('midtermapp.db')
-    c = conn.cursor()
-    c.execute("UPDATE taskdata SET status = 'Closed' WHERE id = ?", id)
-    conn.commit()
-    print('update complete')
-    c.close()
-    conn.close()
+# def close_task_db(id):
+#     conn = sqlite3.connect('midtermapp.db')
+#     c = conn.cursor()
+#     c.execute("UPDATE taskdata SET status = 'Closed' WHERE id = ?", id)
+#     conn.commit()
+#     print('update complete')
+#     c.close()
+#     conn.close()
 
 # def end_conn():
 #
@@ -81,12 +75,13 @@ def close_task_db(id):
 #     conn.close()
 
 
-def dict_factory(cursor, row):
-    d = {}
-    for idx, col in enumerate(cursor.description):
-        d[col[0]] = row[idx]
-    return d
+# def dict_factory(cursor, row):
+#     d = {}
+#     for idx, col in enumerate(cursor.description):
+#         d[col[0]] = row[idx]
+#     return d
 
+dbcode.create_table()
 
 app = Flask(__name__)
 # Secret key used for wtforms' login.
@@ -99,8 +94,8 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
 
-# TODO remove once database works
-alltasks = dataFunction()
+# # TODO remove once database works
+# alltasks = dataFunction()
 
 loggedIn = False
 
@@ -145,83 +140,39 @@ class SignupForm(FlaskForm):
 
 
 @app.route('/')
-# @login_required
 def home():
-
-    # testing:
-    data = select_all_db()
-
     return render_template('homebase.html', loggedIn=loggedIn)
 
 
 @app.route('/newtask', methods=['POST'])
 def new_task():
-    # if request.form['taskButton'] == 'NEW TASK':
-        # TODO get next id number from database (probably when db starts up)
-
-    return render_template('newtask.html') #, idd=dataCount + 1)
+    return render_template('newtask.html')
 
 
 @app.route('/viewtasks', methods=['POST'])
 def view_tasks():
-    # if request.form['taskButton'] == 'VIEW TASKS':
-
-    data = select_all_db()
-
-    return render_template('viewtasks.html', tasks=data) #alltasks)
+    data = dbcode.select_all_db()
+    return render_template('viewtasks.html', tasks=data)
 
 
 @app.route('/task/<string:id>/')
 def showTasks(id):
-    inputvalues = request.get_data()
+# TODO design and create
     return render_template('task.html', id=id)
 
 
 @app.route('/madeit', methods=['POST'])
 def madeTask():
-    # TODO test data exchanged with pulled data:
-    # madeatask = {
-    #     'id': 48,
-    #     'taskname': 'steal candy from baby',
-    #     'descript': '',
-    #     'opened': '87 years',
-    #     'seller': 'Alucard\nLevel 99',
-    #     'fare': '12% of hall',
-    #     'duration': '',
-    #     'status': 'Active'
-    # }
-
-    # data = select_all_db()
-    # dataCount = len(data) #.__len__()
-    # print('count maybe is: ' + str(dataCount))
-    # formData = jsonify(request.get_json())
-    # # add_task_db()
-    # # formData = request.get_data()
-    # print(request.get_data())
-    # print(formData)
-
 # TODO move time and other stuff out of methods and add here
     taskname = request.form['tasknameInput']
     descript = request.form['descriptInput']
     seller = 'Dave'
     fare = request.form['fareInput']
     duration = request.form['durationInput']
-    add_task_db(taskname, descript, seller, fare, duration)
-    madeatask = select_taskname_db(taskname)
-    # madeatask = {
-    #     'id': dataCount + 1,
-    #     'taskname': taskname,
-    #     'descript': descript,
-    #     # 'opened':
-    #     'seller': 'Dave',
-    #     'fare': request.form['fareInput'],
-    #     'duration': request.form['durationInput']
-    #
-    # }
-    print(madeatask)
-# TODO add values to database
-
+    dbcode.add_task_db(taskname, descript, seller, fare, duration)
+    madeatask = dbcode.select_taskname_db(taskname)
     return render_template('madenewtask.html', task=madeatask)
+
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -274,10 +225,10 @@ def signup():
     #     return render_template('homebase.html', loggedIn=loggedIn)
 
 @app.route('/logout')
-@login_required
 def logout():
     logout_user()
     return render_template('homebase.html', loggedIn=loggedIn, name='Guest')
+
 
 if __name__ == '__main__':
     app.run(debug=True)
