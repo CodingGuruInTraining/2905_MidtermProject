@@ -249,4 +249,5 @@ if __name__ == '__main__':
     # amazing login and database setup - https://www.youtube.com/watch?v=8aTnmsDMldY
     # row_factory - https://stackoverflow.com/questions/3300464/how-can-i-get-dict-from-sqlite-query
     # request.form.getlist - https://stackoverflow.com/questions/7996075/iterate-through-checkboxes-in-flask
+    # css for table - http://johnsardine.com/freebies/dl-html-css/simple-little-tab/
     #

@@ -30,6 +30,7 @@
                             <td>{{ task.taskname }}</td>
                             <td>{{ task.descript }}</td>
                             <td>{{ task.opened }}</td>
+{#                            <td>{{ (task.opened // 1000)|timestamp_to_time|datetimeformat('%b %d, %Y %I %M %S') }}</td>#}
                             <td>{{ task.seller }}</td>
                             <td>{{ task.fare }}</td>
                             <td>{{ task.duration }}</td>
@@ -38,7 +39,7 @@
                     {% endfor %}
                 </tbody>
             </table>
-            <input type="submit" value="Accept Task(s)"/>
+            <input type="submit" value="Call Dibs!"/>
         </form>
     </div>
 {% endblock %}
