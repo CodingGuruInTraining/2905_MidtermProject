@@ -1,8 +1,4 @@
 from flask import Flask, render_template, url_for, request, jsonify
-
-# TODO remove once database works
-from tempdata import dataFunction
-
 from flask_sqlalchemy import SQLAlchemy
 import time
 from flask_bootstrap import Bootstrap
@@ -123,6 +119,10 @@ def madeTask():
 
     fare = request.form['fareInput']
     duration = request.form['durationInput']
+
+    if taskname == "" or descript == "" or fare == "" or duration == "":
+        return render_template('newtask.html', error="Please fill in all fields.")
+
     # Runs query to add values to database.
     dbcode.add_task_db(taskname, descript, seller, fare, duration)
     # Retrieves the database entry that was just added.
@@ -152,8 +152,6 @@ def sellSoul():
 @app.route('/about')
 def about():
     return render_template('about.html')
-
-
 
 
 # Route for contact page that is in the works.
@@ -190,8 +188,6 @@ def login():
 
 
 
-
-
 # Route for signup page that uses validation.
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
@@ -221,14 +217,11 @@ def signup():
     #     return render_template('homebase.html', loggedIn=loggedIn)
 
 
-
-
 # Route for logging out.
 @app.route('/logout')
 def logout():
     logout_user()
     return render_template('homebase.html', loggedIn=loggedIn, name='Guest')
-
 
 
 
